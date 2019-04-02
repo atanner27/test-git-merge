@@ -13,4 +13,6 @@ jobs:
 
       - run:
           name: Print the Git
-          command: git diff HEAD^1
+          command: git diff HEAD^1 --name-status
+
+
