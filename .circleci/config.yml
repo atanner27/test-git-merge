@@ -14,8 +14,9 @@ jobs:
           command: |
             docker pull gcr.io/google-appengine/python:latest
             NEW_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' gcr.io/google-appengine/python:latest)
-            echo  $NEW_SHA
-            OLD_SHA=cat ./Dockerfile | grep "FROM" | awk '{print $2}'
+            echo $NEW_SHA
+            OLD_SHA=$(cat ./Dockerfile | grep "FROM" | awk '{print $2}')
+            echo $NEW_SHA
             if [ "$OLD_SHA" != "$NEW_SHA" ]; then
                 sed -i 's/$OLD_SHA/NEW_SHA/g' ./Dockerfile
                 git add ./Dockerfile
