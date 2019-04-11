@@ -25,8 +25,11 @@ jobs:
             echo $OLD_SHA
             if [ "$OLD_SHA" != "$NEW_SHA" ]; then
                 sed -i 's/$OLD_SHA/NEW_SHA/g' ./Dockerfile
+                git config user.name atanner27
+                git config user.email atanner2727@gmail.com
                 git add ./Dockerfile
                 git commit -m "Modified Base Image to $OLD_SHA"
+                git push origin master
             fi
 
 workflows:
