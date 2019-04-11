@@ -10,6 +10,12 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Keyscan Github (HACK)
+          command: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - run:
+          command: |
+            git clone git@github.com/atanner27/test-git-merge.git
+      - run:
           name: Detect Base Image Changes 
           command: |
             docker pull gcr.io/google-appengine/python:latest
