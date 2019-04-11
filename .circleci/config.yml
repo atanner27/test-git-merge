@@ -1,18 +1,44 @@
 version: 2
 jobs:
-  build:
+  update_image:
     docker:
-      - image: cibuilds/github:0.10
-
+      - image: circleci/python:3.7.2
+    working_directory: /home/circleci/src
     steps:
+      - setup_remote_docker
       - checkout
-
+      - attach_workspace:
+          at: .
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: Detect Base Image Changes 
+          command: |
+            docker pull gcr.io/google-appengine/python:latest
+            NEW_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' gcr.io/google-appengine/python:latest)
+            echo  $NEW_SHA
+            OLD_SHA=cat ./Dockerfile | grep "FROM" | awk '{print $2}'
+            if [ "$OLD_SHA" != "$NEW_SHA" ]; then
+                sed -i 's/$OLD_SHA/NEW_SHA/g' ./Dockerfile
+                git add ./Dockerfile
+                git commit -m "Modified Base Image to $OLD_SHA"
+            fi
 
-      - run:
-          name: Print the Git
-          command: git diff HEAD^1 --name-status
+workflows:
+  version: 2
+  build:
+    jobs:
+      - update_image:
+          filters:
+            tags:
+              only: master
 
-
+  # nightly:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 0 * * *"
+  #         filters:
+  #           branches:
+  #             only:
+  #               - master
+  #   jobs:
+  #     - update_image
+ 

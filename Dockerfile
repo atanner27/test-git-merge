@@ -1,0 +1,1 @@
+FROM gcr.io/google-appengine/python@sha256:d976259571e7af94f06bdf0c9fb55e274fb6da8ac9add446cdb2719b1447364a
